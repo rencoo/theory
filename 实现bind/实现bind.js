@@ -3,12 +3,12 @@
 // 输出：返回原函数的拷贝，即返回一个函数，这个函数呢具备原函数的功能
 
 // 定义这个方法为myBind
-Function.prototype.myBind = function (thisArg) {
+Function.prototype.myBind = function (thisObj) {
 	if(typeof this !== 'function') return;
 	var that = this;
 	var args = Array.prototype.slice.call(arguments, 1); // 从第二个参数截取
 	return function () {
-		return that.apply(thisArg, args.concat(Array.prototype.slice.call(arguments)));
+		return that.apply(thisObj, args.concat(Array.prototype.slice.call(arguments)));
 	}
 };
 
