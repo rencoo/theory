@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<!-- 一直白屏等script里的脚本执行完毕后, 才显示hello world -->
+<!-- 不论script在什么位置 -->
+<!-- <body>
+    hello
+    <script>
+        for(var i=0; i<100000; i++) {
+            console.log(i);
+        }
+    </script>
+    world
+</body> -->
+<!-- <body>
+    <h1>这里也会被阻塞</h1>
+    <div>
+        hello
+        world
+        <script>
+            for(var i=0; i<100000; i++) {
+                console.log(i);
+            }
+        </script>
+    </div>
+</body> -->
+<body>
+    <h1>这里也会被阻塞</h1>
+    <script>
+        for(var i=0; i<100000; i++) {
+            console.log(i);
+        }
+    </script>
+    <h1>这里也会被阻塞</h1>
+</body>
+</html>

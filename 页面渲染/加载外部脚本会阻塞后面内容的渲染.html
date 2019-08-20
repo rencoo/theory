@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<!-- hello先渲染显示, 等外部脚本请求和执行完后, 才渲染和显示world -->
+<!-- 当使用sctipt src技术下载脚本时, 浏览器停止渲染所有脚本后面的内容 -->
+<!-- 但是这种方式在全部渲染完毕之前通过冻结页面来表示浏览器正忙, 这是一种非常差劲的方式 -->
+<body>
+    hello
+    <script src="./test.js"></script>
+    world
+</body>
+</html>
