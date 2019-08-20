@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>页面渲染不会被阻塞</h1>
+    <script>
+        function longCode() {
+            var tStart = Number(new Date());
+            while((tStart + 5000) > Number(new Date())) {
+                console.log("继续执行");
+            }
+        }
+
+        setTimeout(longCode, 0);
+    </script>
+    <h1>页面渲染不会被阻塞</h1>
+</body>
+</html>
