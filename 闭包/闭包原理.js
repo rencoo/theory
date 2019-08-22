@@ -57,10 +57,11 @@ foo(); // 打印  1
 // 伪代码描述 InnerFoo函数的执行环境
 InnerFooExecutionContext = {
 	variableObject: {
+		arg: arguments,
 	},
 	this: thisValue,
 	Scope: [ // Scope chain
-		innerFooExecutionContext. variableObject,  // innerFoo的变量对象
+		innerFooExecutionContext.variableObject,  // innerFoo的变量对象
 		FooExecutionContext.variableObject,  // foo的变量对象
 		globalContext.variableObject  // 全局执行环境window的变量对象
 	]
@@ -69,7 +70,9 @@ InnerFooExecutionContext = {
 // Foo函数的执行环境：
 FooExecutionContext = {
 	variableObject: {
-		a: 1
+		a: 1,
+		innerFoo: innerFoo ,// [对函数声明innerFoo的引用]
+		arg: arguments,
 	},
 	this: thisValue,
 	Scope: [ // Scope chain
@@ -81,14 +84,14 @@ FooExecutionContext = {
 // 作用域链其实就是个从当前函数的变量对象开始，从里到外取出所有变量对象，组成的一个列表。
 // 通过这个作用域链列表，就可以实现对上层作用域的访问
 
-// innerFoo在自己的执行环境的变量对象中没有找到
-// a 的变量声明， 它感到很苦恼，但转念一想： 诶！ 我可以向上层函数执行环境的变量对象(variableObject)中找嘛！
+// innerFoo在自己的执行环境的变量对象中没有找到a 的变量声明， 它感到很苦恼，
+// 但转念一想： 诶！ 我可以向上层函数执行环境的变量对象(variableObject)中找嘛！
 // 于是乎沿着作用域链( Scope chain)攀爬，
 // 往上找变量a，幸运的是，在父函数Foo的变量对象，它找到了自己需要的变量a
 
 // 闭包和柯里化
 // 闭包和函数柯里化在定义一个函数的时候，可能会使用到多层嵌套的闭包，
-// 这种用法，叫做“柯里化”。 而闭包柯里化有两大作用：参数累加和延迟调用
+// 这种用法，叫做“柯里化”。 而闭包柯里化有两大作用：参数累加和延迟调用!!!!!
 function foo (a) {
 	return function (b) {
 		return function (c) {
