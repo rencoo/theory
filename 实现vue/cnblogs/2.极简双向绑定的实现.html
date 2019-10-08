@@ -1,0 +1,18 @@
+<input type="text" id="a">
+<span id="b"></span>
+
+<script>
+    var obj = {};
+    Object.defineProperty(obj, 'hello', {
+        set(newVal) {
+            document.getElementById('a').value = newVal;
+            document.getElementById('b').innerHTML = newVal;
+        }
+    });
+
+    document.addEventListener('keyup', evt => {
+        obj.hello = evt.target.value;
+    });
+</script>
+<!-- 此例实现的效果是：随文本框输入文字的变化，span 中会同步显示相同的文字内容；
+在js或控制台显式的修改 obj.hello 的值，视图会相应更新。这样就实现了 model => view 以及 view => model 的双向绑定。 -->

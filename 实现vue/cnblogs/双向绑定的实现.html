@@ -1,0 +1,200 @@
+<div id="app">
+        <input type="text" v-model="text">
+        {{text}}
+</div>
+        
+<script>
+    
+    function defineReactive(obj, key, val) {
+        var dep = new Dep();
+
+        Object.defineProperty(obj, key, {
+            get() {
+                // 添加订阅者watcher到主题对象Dep(中介)
+                if(Dep.target) dep.addSub(Dep.target); //compile里生成订阅者对象 watcher(Dep.target)
+                return val;
+            },
+            set(newVal) {
+                if(newVal === val) return;
+                val = newVal;
+                console.log(val); //方便看效果 viem -> model
+                
+                // 作为发布者发出通知
+                dep.notify();
+            }
+        });
+    }
+
+    // vm属性变化, 触发obj对应属性的变化
+    function observe(obj, vm) {
+        Object.keys(obj).forEach(key => {
+            defineReactive(vm, key, obj[key]);
+        });
+    }
+
+    // 文档片段, 性能优化
+    function nodeToFragment(node, vm) {
+        var flag = document.createDocumentFragment();
+        var child;
+
+        // var child = node.firstChild;
+        // while (child !== null) {
+        //     flag.appendChild(child);  // firstChild 被劫持了，相当于从 DOM 中删除了
+        //     child = node.firstChild;  // 这时的 firstChild 其实已经是“下一个”子节点了
+        //     console.log(child);  // 你可以试试看打印出啥
+        // }
+
+        while (child = node.firstChild) {
+            // 数据绑定
+            compile(child, vm);
+            flag.appendChild(child); //劫持node的所有子节点
+        }
+
+        return flag;
+    }
+
+    // 数据初始化绑定
+    // 输入框内容变化时, data中的数据同步变化; 即 view => model
+    // 通过 input(v-model="text") -> vm(Vue实例)的属性(vm["text"])变化 -> (vm的data对象上的相应属性变化 vm.data.text)
+    function compile(node, vm) {
+        var reg = /\{\{(.*)\}\}/;
+        // 节点类型为元素
+        if(node.nodeType === 1) {
+            var attr = node.attributes;
+
+            //解析属性
+            for(var i=0; i<attr.length; i++) {
+                if(attr[i].nodeName === 'v-model') {
+                    var name = attr[i].nodeValue; //获取v-model绑定的属性名
+                    node.addEventListener('input', evt => {
+                        // 给相应的data属性赋值, 进而触发该属性的set方法
+                        vm[name] = evt.target.value;
+                    });
+                    // node.value = vm[name]; //将data的值赋给该node; 这一步在watcher里做了
+                    node.removeAttribute('v-model');
+
+                    // 将watcher添加到关联的dep(中介者)
+                    new Watcher(vm, node, name);
+                }
+            }
+        }
+
+        //节点类型为text
+        if(node.nodeType === 3) {
+            if(reg.test(node.nodeValue)) {
+                var name = RegExp.$1; //获取匹配到的字符串
+                name = name.trim();
+                // node.nodeValue = vm[name]; //将data的值赋给该node
+
+                // 将watcher添加到关联的dep(中介者)
+                new Watcher(vm, node, name);
+            }
+        }
+    }
+
+    // 标签有嵌套; 优化版 compile
+    function compile_strong (node, vm) {
+        var reg = /\{\{(.*)\}\}/;
+        //这里加一个递归
+        if(node.childNodes && node.childNodes.length>0){
+            for(var i=0,len =node.childNodes.length;i<len;i++ ){
+                compile(node.childNodes[i],vm);
+            }
+        }
+        // 节点类型为元素
+        if (node.nodeType === 1) {
+            var attr = node.attributes;
+            // 解析属性
+            for (var i = 0; i < attr.length; i++) {
+                if (attr[i].nodeName == 'v-model') {
+                    var name = attr[i].nodeValue; // 获取v-model绑定的属性名
+                    node.addEventListener('keyup', function (e) {
+                        // 给相应的data属性赋值，进而触发该属性的set方法
+                        vm[name] = e.target.value;
+                    });
+                    node.value = vm[name]; // 将data的值赋给该node
+                    node.removeAttribute('v-model');
+                }
+            };
+            new Watcher(vm, node, name, 'input');
+        }
+        // 节点类型为text
+        if (node.nodeType === 3) {
+            if (reg.test(node.nodeValue)) {
+                var name = RegExp.$1; // 获取匹配到的字符串
+                name = name.trim();
+                new Watcher(vm, node, name, 'text');
+            }
+        }
+    }
+
+    // 订阅者
+    function Watcher(vm, node, name) {
+        Dep.target = this;
+        this.name = name; //用于方法中
+        this.node = node; //用于方法中
+        this.vm = vm; //用于方法中
+        this.update();
+        Dep.target = null;
+    }
+
+    Watcher.prototype = {
+        update() {
+            this.get();
+
+            if (this.node.nodeType === 1) // 元素节点(nodeValue为null)
+            {
+                this.node.value = this.value; // 更新视图
+            } 
+            else if (this.node.nodeType === 3) // 文本节点
+            {
+                this.node.nodeValue = this.value; // 更新视图
+            }
+        },
+
+        // 获取data中的属性值
+        get() {
+            this.value = this.vm[this.name]; // 触发相应属性的get
+        }
+    };
+
+    // 主体对象(中介者)
+    function Dep () {
+        this.subs = [];
+    }
+
+    Dep.prototype = {
+        addSub (sub) {
+            this.subs.push(sub);
+        },
+
+        notify() {
+            this.subs.forEach(sub => {
+                sub.update();
+            });
+        }
+    }
+
+    function Vue (options) {
+        this.data = options.data;
+        var data = this.data;
+
+        // 观察定义在Vue实例对象(this)上的属性变化, 改变Vue实例data对象上相应的属性值
+        // 一、监听数据
+        observe(data, this);
+
+        // 二、编译HTML
+        var id = options.el;
+        var dom = nodeToFragment(document.getElementById(id), this);
+        
+        // 编译完成后, 将dom返回到app中
+        document.getElementById(id).appendChild(dom);
+    }
+
+    var vm = new Vue({
+        el: 'app',
+        data: {
+            text: 'hello world'
+        }
+    });
+</script>

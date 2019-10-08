@@ -1,0 +1,96 @@
+<div id="app">
+    <input type="text" v-model="text">
+    {{text}}
+</div>
+    
+    <script>
+        
+        function defineReactive(obj, key, val) {
+            Object.defineProperty(obj, key, {
+                get() {
+                    return val;
+                },
+                set(newVal) {
+                    if(newVal === val) return;
+                    val = newVal;
+                    console.log(val); //方便看效果
+                }
+            });
+        }
+
+        // vm属性变化, 触发obj对应属性的变化
+        function observe(obj, vm) {
+            Object.keys(obj).forEach(key => {
+                defineReactive(vm, key, obj[key]);
+            });
+        }
+
+        function nodeToFragment(node, vm) {
+            var flag = document.createDocumentFragment();
+            var child;
+    
+            while (child = node.firstChild) {
+                // 数据绑定
+                compile(child, vm);
+                flag.appendChild(child); //劫持node的所有子节点
+            }
+    
+            return flag;
+        }
+    
+        // 数据初始化绑定
+        // 输入框内容变化时, data中的数据同步变化; 即 view => model
+        // 通过 input(v-model="text") -> vm(Vue实例)的属性(vm["text"])变化 -> (vm的data对象上的相应属性变化 data.text)
+        function compile(node, vm) {
+            var reg = /\{\{(.*)\}\}/;
+            // 节点类型为元素
+            if(node.nodeType === 1) {
+                var attr = node.attributes;
+    
+                //解析属性
+                for(var i=0; i<attr.length; i++) {
+                    if(attr[i].nodeName === 'v-model') {
+                        var name = attr[i].nodeValue; //获取v-model绑定的属性名
+                        node.addEventListener('input', evt => {
+                            // 给相应的data属性赋值, 进而触发该属性的set方法
+                            vm[name] = evt.target.value;
+                        });
+                        node.value = vm[name]; //将data的值赋给该node
+                        node.removeAttribute('v-model');
+                    }
+                }
+            }
+    
+            //节点类型为text
+            if(node.nodeType === 3) {
+                if(reg.test(node.nodeValue)) {
+                    var name = RegExp.$1; //获取匹配到的字符串
+                    name = name.trim();
+                    node.nodeValue = vm[name]; //将data的值赋给该node
+                }
+            }
+        }
+    
+        function Vue (options) {
+            this.data = options.data;
+            var data = this.data;
+
+            // 观察定义在Vue实例对象(this)上的属性变化, 改变Vue实例data对象上相应的属性值
+            observe(data, this);
+
+            var id = options.el;
+            var dom = nodeToFragment(document.getElementById(id), this);
+            
+            // 编译完成后, 将dom返回到app中
+            document.getElementById(id).appendChild(dom);
+        }
+    
+        var vm = new Vue({
+            el: 'app',
+            data: {
+                text: 'hello world'
+            }
+        });
+    </script>
+
+<!-- 任务二也就完成了，data中 text 属性值会与输入框的内容同步变化： -->

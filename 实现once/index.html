@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+<div class="main">
+	<div>
+		<button>onceClick</button>
+	</div>
+</div>
+<!--<script src="once.js"></script>-->
+<script src="vue.once.js"></script>
+<script>
+	let btn = document.querySelector('button');
+	let btnClickHandler = function() {
+		console.log('btn click');
+	};
+	btn.addEventListener('click', once(btnClickHandler), false);
+</script>
+</body>
+</html>

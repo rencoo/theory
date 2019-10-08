@@ -1,0 +1,22 @@
+<div id="app">
+    <input type="text" id="a">
+    <span id="b"></span>
+</div>
+
+<script>
+    var dom = nodeToFragment(document.getElementById('app'));
+    console.log(dom);
+
+    function nodeToFragment (node) {
+        var flag = document.createDocumentFragment();
+        var child;
+        while (child = node.firstChild) {
+            flag.appendChild(child);
+        }
+
+        return flag;
+    }
+
+    //操作处理,dom(虚拟片段) 性能优
+    document.getElementById('app').appendChild(dom); //返回到app中(在最后一步, 其他处理节点的操作都在DocumentFragment上完成)
+</script>
