@@ -1,0 +1,15 @@
+<script type="module">
+	alert(typeof button); // object: 脚本可以‘看见’下面的 button
+	// 当脚本模块延迟时，脚本在整个页面加载完成之后才执行
+</script>
+
+<!--相较于普通脚本：-->
+
+<script>
+	alert(typeof button); // undefined，脚本不能“看到”下面的元素
+	// 普通脚本在剩余页面加载完成前就执行了
+</script>
+
+<button id="button">Button</button>
+
+<!--先 undefined 然后再 object-->
