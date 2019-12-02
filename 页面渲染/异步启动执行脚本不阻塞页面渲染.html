@@ -17,6 +17,10 @@
         }
 
         setTimeout(longCode, 0);
+
+        window.addEventListener('DOMContentLoaded', function () {
+            console.log('DOMContentLoaded') // DOMContentLoaded事件调用后执行 setTimeout 里的函数
+        })
     </script>
     <h1>页面渲染不会被阻塞</h1>
 </body>

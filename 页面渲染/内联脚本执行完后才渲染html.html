@@ -31,11 +31,29 @@
 </body> -->
 <body>
     <h1>这里也会被阻塞</h1>
+    <button id="button">Button</button>
     <script>
-        for(var i=0; i<100000; i++) {
-            console.log(i);
+        alert(typeof button) // object
+        alert(typeof span) // undefined
+        // 虽然此时脚本之前的html代码已解析；
+        // 但是渲染还是需要等到内联脚本执行完毕之后, 无论是脚本前的dom渲染还是脚本后的
+        // 因此页面一开始一直是空白状态
+        function longCode() {
+            var tStart = Number(new Date());
+            while((tStart + 5000) > Number(new Date())) {
+                console.log("继续执行");
+            }
         }
+        longCode()
+
+        window.addEventListener('DOMContentLoaded', function () {
+            console.log('DOMContentLoaded') // longCode 比这里先执行
+        })
+        // 当初始的 HTML 文档被完全加载和解析完成之后，DOMContentLoaded 事件被触发，而无需等待样式表、图像和子框架的完成加载。
+        // 另一个不同的事件 load 应该仅用于检测一个完全加载的页面。 
+        // 在使用 DOMContentLoaded 更加合适的情况下使用 load 是一个令人难以置信的流行的错误，所以要谨慎。
     </script>
     <h1>这里也会被阻塞</h1>
+    <span id="span">span</button>
 </body>
 </html>
