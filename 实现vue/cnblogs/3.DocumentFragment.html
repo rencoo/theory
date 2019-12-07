@@ -1,3 +1,4 @@
+<!-- 将原dom劫持到虚拟文档片段中, 从而方便对其进行操作 -->
 <div id="app">
     <input type="text" id="a">
     <span id="b"></span>
@@ -17,6 +18,6 @@
         return flag;
     }
 
-    //操作处理,dom(虚拟片段) 性能优
+    //操作处理,dom(虚拟片段) 性能优化
     document.getElementById('app').appendChild(dom); //返回到app中(在最后一步, 其他处理节点的操作都在DocumentFragment上完成)
 </script>

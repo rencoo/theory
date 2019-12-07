@@ -15,27 +15,17 @@ function observe(data) {
 }
 
 function defineReactive(data, key, val) {
-    observe(val); // 监听子属性
-    Object.defineProperty(data, key, {
-        enumerable: true, // 可枚举
-        configurable: false, // 不能再define
-        get: function () {
-            return val;
-        },
-        set: function (newVal) {
-            console.log('哈哈哈，监听到值变化了 ', val, ' --> ', newVal);
-            val = newVal;
-        }
-    });
-}
-
-// ... 省略
-function defineReactive(data, key, val) {
     var dep = new Dep();
     observe(val); // 监听子属性
 
     Object.defineProperty(data, key, {
-        // ... 省略
+        enumerable: true, // 可枚举
+        configurable: false, // 不能再define
+        get: function () {
+            // 由于需要在闭包内添加watcher，所以通过Dep定义一个全局target属性，暂存watcher, 添加完移除
+            Dep.target && Dep.target.addDep(dep);
+            return val;
+        },
         set: function (newVal) {
             if (val === newVal) return;
             console.log('哈哈哈，监听到值变化了 ', val, ' --> ', newVal);
@@ -45,6 +35,7 @@ function defineReactive(data, key, val) {
     });
 }
 
+// 实现Dep
 function Dep() {
     this.subs = [];
 }
@@ -58,17 +49,6 @@ Dep.prototype = {
         });
     }
 };
-
-// Observer.js
-// ...省略
-Object.defineProperty(data, key, {
-    get: function () {
-        // 由于需要在闭包内添加watcher，所以通过Dep定义一个全局target属性，暂存watcher, 添加完移除
-        Dep.target && dep.addDep(Dep.target);
-        return val;
-    }
-    // ... 省略
-});
 
 // Watcher.js
 Watcher.prototype = {
