@@ -1,0 +1,65 @@
+<style>
+    body {
+        font-size: 30px;
+    }
+    span {
+        color: coral;
+    }
+    p {
+        font-size: 16px;
+    }
+</style>
+<div>
+    <input type="text"><br/>
+    no throttle: <br/>
+    <span id="one"></span><br/>
+    throttle: <br/>
+    <span id="two"></span><br/>
+    throttle_optimize: <br/>
+    <span id="three"></span><br/>
+    throttle_optimize2: <br/>
+    <span id="four"></span><br/>
+</div>
+<div>
+<p>说明：如果连续不断的输入(模拟频繁操作)</p>
+<p>第一种情况 no throttle, 就是实时更新</p>
+<p>第二种情况 throttle, 会一直卡住(只有等到停止输入后一段时间才会更新)</p>
+<p>第三种情况 throttle_optimize, 会更新用户的第一次输入, 之后会一直卡住(和第二种情况一样)</p>
+<p>第四种情况 throttle_optimize2, 不仅会更新用户的第一次输入, 之后也会每隔一定的时间内更新一次</p>
+</div>
+<script src="./throttle.js"></script>
+<script>
+    var wait = 3000;
+    var input = document.querySelector('input');
+    var output1 = document.querySelector('#one');
+    var output2 = document.querySelector('#two');
+    var output3 = document.querySelector('#three')
+    var output4 = document.querySelector('#four')
+    var update1 = function () {
+        output1.innerText = input.value;
+    };
+    var update2 = function () {
+        output2.innerText = input.value;
+    };
+    var update3 = function () {
+        output3.innerText = input.value;
+    };
+    var update4 = function () {
+        output4.innerText = input.value;
+    };
+
+    var throttleUpdate = throttle(update2, wait);
+    // 优化版的throttle, 对用户的首次操作总是给予反馈；其他与 throttle 原理一致
+    var throttleUpdate_optimize = throttle_optimize(update3, wait);
+    // 用于动画渲染的 throttle, 频繁的操作中, 每隔 wait 时间渲染一次
+    var throttleUpdate_optimize2 = throttle_optimize2(update4, wait);
+
+    var inputCallback = function () {
+        update1(); // 实时更新
+        throttleUpdate(); // 普通 throttle; 目的是只有在执行函数的请求停止了一段时间之后才执行
+        throttleUpdate_optimize(); // 优化 throttle
+        throttleUpdate_optimize2(); // 动画 throttle
+    };
+
+    input.addEventListener('input', inputCallback);
+</script>

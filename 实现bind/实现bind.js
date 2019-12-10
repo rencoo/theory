@@ -73,5 +73,11 @@ var bar = foo.myBind(obj);
 bar('Jack');
 console.log(obj.name);  // Jack
 var alice = new bar('Alice');
+// TODO:
+// 这里使用 new 调用后, 手动打印后, 输出结果是: fnBound {name: 'Alice'}
+
+// 如果是使用原生bind,
+// var bar = foo.bind(obj); var alice = new bar('Alice'); 
+// 使用原生bind, 通过 new 调用后, 手动打印后, 输出的是 foo {name: 'Alice'}
 console.log(obj.name);  // Jack
 console.log(alice.name);    // Alice
