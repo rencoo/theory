@@ -1,10 +1,11 @@
 Function.prototype.myBind = function (context, ...args) {
-    if (typeof this !== 'function') return;
     var fn = this;
-    var boundFn = function (...innerArgs) {
+    if (typeof fn !== 'function') return;
+    
+    var boundFn;
+    var binder = function (...innerArgs) {
         args = args.concat(innerArgs);
         
-		var res;
         // console.log(this instanceof boundFn); // 使用 new 调用时, this 即为构造函数的实例, 判断结果为 true (优先级高于 bind 传入的 context)
         if(this instanceof boundFn) { // new 调用; 不使用bind传入的 context
             var res = fn.apply(this, args);
@@ -16,6 +17,8 @@ Function.prototype.myBind = function (context, ...args) {
 			return fn.apply(context, args);
         }
     }
+
+    boundFn = Function('binder', 'return function (){ return binder.apply(this,arguments); }')(binder);
 
     if (fn.prototype) {
         var Empty = function Empty() {};
