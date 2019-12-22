@@ -1,24 +1,28 @@
-// 1.创建一个空对象作为this
-// 2.将该对象链接到原型对象
-function myNew() {
-    // 构造函数就是传入的第一个参数
-    var constructor = Array.prototype.shift.call(arguments);
-    var obj = Object.create(constructor.prototype);
+function myNew (Fn, ...args) {
+    // 1.生成一个空对象作为this
+    // 2.将对象链接到原型上
+    let obj = Object.create(Fn.prototype)
+    // 3.执行构造函数, 并将obj作为context传入(为实例对象添加属性)
+    let res = Fn.apply(obj, args) // 构造函数内的 this 动态改变为 obj
+    // 4.return this或者构造函数的执行结果(引用类型)
+    return typeof res === 'object' ? res : obj
+    // return result instanceof Object ? res : obj
 }
-// 3.执行构造函数中的代码(为新对象添加属性)
-function myNew() {
-    // 构造函数就是传入的第一个参数
-    var constructor = Array.prototype.shift.call(arguments);
-    var obj = Object.create(constructor.prototype);
-    var result = constructor.apply(obj, arguments);
-}
-// 3.将构造函数的作用域赋给该对象(此时this指向该对象)
-// 4.return this(如果函数不返回任何引用类型值)
-function myNew() {
-    // 构造函数就是传入的第一个参数
-    var constructor = Array.prototype.shift.call(arguments);
-    var obj = Object.create(constructor.prototype);
-    var result = constructor.apply(obj, arguments); // this动态改变为obj
 
-    return result instanceof Object ? result : obj;
+// test
+function Person (name, age) {
+	this.name = name;
+	this.age = age;
 }
+
+var a = myNew(Person, 'rencoo', 25)
+console.log(a) // Person {name: "rencoo", age: 25}
+var b = new Person('ge can', 26)
+console.log(b) // Person {name: "gecan", age: 26}
+
+Person.prototype.sayHi = function () {
+	console.log(this.name)
+}
+
+a.sayHi() // rencoo
+b.sayHi() // gecan
