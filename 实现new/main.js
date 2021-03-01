@@ -26,3 +26,23 @@ Person.prototype.sayHi = function () {
 
 a.sayHi() // rencoo
 b.sayHi() // gecan
+
+
+// https://zhuanlan.zhihu.com/p/113015729
+function newFake() {
+    var obj = new Object()
+
+    // 取出第一个参数即要传入的构造函数。此外shift 会修改原数组故arguments会被去除第一个参数
+    var constructor = Array.prototype.shift.call(arguments) // 通过call()让arguments能够借用shift方法
+
+    // 关联 __proto__ 到 constructor.prototype
+    // 这样 obj 就可以访问到构造函数原型中的属性
+    obj.__proto__ = constructor.prototype
+
+    // 将构造函数的 this 指向新建的对象
+    // 这样 obj 就可以访问到构造函数中的属性
+    var result = constructor.apply(obj, arguments);
+
+    // 返回类型判断, 如果是对象则返回构造函数返回的对象；否则返回创建的新对象
+    return typeof result === 'object' ? result : obj;
+};
