@@ -16,9 +16,11 @@ function Person (name, age) {
 }
 
 var a = myNew(Person, 'rencoo', 25)
-console.log(a) // Person {name: "rencoo", age: 25}
+console.log(a)
+// Person {name: "rencoo", age: 25}
 var b = new Person('ge can', 26)
-console.log(b) // Person {name: "gecan", age: 26}
+console.log(b)
+// Person {name: "gecan", age: 26}
 
 Person.prototype.sayHi = function () {
 	console.log(this.name)
