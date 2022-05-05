@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>这是iframe页面</div>
+  <script>
+    if (window.parent) {
+      //污染父窗口对像的原型
+      window.parent.Array.prototype.custom = function() {
+        return 'custom';
+      };
+    }
+  </script>
+</body>
+</html>
