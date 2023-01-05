@@ -94,3 +94,29 @@ Promise.resolve().then(() => {
 // setTimeout
 // fs.readdir
 // setImmediate
+
+setTimeout(() => console.log(1));
+setImmediate(() => console.log(2));
+Promise.resolve().then(() => console.log(3)); // 本轮循环
+process.nextTick(() => console.log(4)); // 本轮循环
+(() => console.log(5))();
+// 5 4 3 1 2 // 或者 2 1
+
+
+// https://lynnelv.github.io/js-event-loop-nodejs
+setTimeout(() => {
+  console.log('timer1');
+
+  Promise.resolve().then(function () {
+    console.log('promise1');
+  });
+}, 0);
+
+setTimeout(() => {
+  console.log('timer2');
+
+  Promise.resolve().then(function () {
+    console.log('promise2');
+  });
+}, 0);
+// node 和 浏览器执行有差异
