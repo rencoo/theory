@@ -40,7 +40,7 @@ function newFake() {
     // 关联 __proto__ 到 constructor.prototype
     // 这样 obj 就可以访问到构造函数原型中的属性
     obj.__proto__ = constructor.prototype
-
+vra
     // 将构造函数的 this 指向新建的对象
     // 这样 obj 就可以访问到构造函数中的属性
     var result = constructor.apply(obj, arguments);
@@ -65,3 +65,5 @@ function _new(/* 构造函数 */ constructor, /* 构造函数参数 */ params) {
 
 // 实例
 var actor = _new(Person, '张三', 28);
+
+// 可参考 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new
