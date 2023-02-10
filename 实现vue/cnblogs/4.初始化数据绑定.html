@@ -4,7 +4,6 @@
 </div>
 
 <script>
-    
     function nodeToFragment(node, vm) {
         var flag = document.createDocumentFragment();
         var child;
@@ -21,13 +20,13 @@
     function compile(node, vm) {
         var reg = /\{\{(.*)\}\}/;
         // 节点类型为元素
-        if(node.nodeType === 1) {
+        if (node.nodeType === 1) {
             var attr = node.attributes;
 
             //解析属性
-            for(var i=0; i<attr.length; i++) {
-                if(attr[i].nodeName === 'v-model') {
-                    var name = attr[i].nodeValue; //获取v-model绑定的属性名
+            for (var i = 0; i < attr.length; i++) {
+                if (attr[i].nodeName === 'v-model') {
+                    const name = attr[i].nodeValue; //获取v-model绑定的属性名
                     node.value = vm.data[name]; //将data的值赋给该node
                     node.removeAttribute('v-model');
                 }
@@ -35,20 +34,20 @@
         }
 
         //节点类型为text
-        if(node.nodeType === 3) {
-            if(reg.test(node.nodeValue)) {
-                var name = RegExp.$1; //获取匹配到的字符串
+        if (node.nodeType === 3) {
+            if (reg.test(node.nodeValue)) {
+                let name = RegExp.$1; //获取匹配到的字符串
                 name = name.trim();
                 node.nodeValue = vm.data[name]; //将data的值赋给该node
             }
         }
     }
 
-    function Vue (options) {
+    function Vue(options) {
         this.data = options.data;
         var id = options.el;
         var dom = nodeToFragment(document.getElementById(id), this);
-        
+
         // 编译完成后, 将dom返回到app中
         document.getElementById(id).appendChild(dom);
     }

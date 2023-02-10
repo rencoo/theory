@@ -1,14 +1,15 @@
 var obj = {};
 Object.defineProperty(obj, 'hello', {
-    get() {
-        console.log('get方法被调用了');
-    },
-    set(val) {
-        console.log('set方法被调用了, 参数是' + val);
-    }
+  get() {
+    console.log('get方法被调用了');
+    return '';
+  },
+  set(val) {
+    console.log('set方法被调用了, 参数是' + val);
+  }
 });
 
-obj.hello; // get方法被调用了
+console.log(obj.hello); // get方法被调用了
 obj.hello = 'abc'; // set方法被调用了, 参数是abc
 
 // 访问器属性的"值"比较特殊，读取或设置访问器属性的值，实际上是调用其内部特性：get和set函数。

@@ -4,6 +4,9 @@
 <script>
     var obj = {};
     Object.defineProperty(obj, 'hello', {
+        get() {
+            return '';
+        },
         set(newVal) {
             document.getElementById('a').value = newVal;
             document.getElementById('b').innerHTML = newVal;
