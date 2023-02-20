@@ -24,6 +24,16 @@ function __require__(modulePath) {
 
 // 2.模块导出对象、函数等等
 /**
+(function() {
+  return function aModuleFunction(exports) {
+    exports = function() { }; // 这样是行不通的！
+  };
+})();
+按照方式一，只传入module.exports是不行的。
+显然，上面的代码是错误的，因为 exports 只是一个参数，它是 module.exports 的引用，直接对它赋值，只是让 exports 指向一个函数，并没有实际更改 module.exports 。为了实现这种需求，我们需要直接把 module 传给 a.js 。
+*/
+
+/**
 function __require__(modulePath) {
   if (cache[modulePath]) return cache[modulePath].exports;
 
